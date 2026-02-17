@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
-import { handleToolCall } from "./toolRouter.js";
+import { handleToolCall2 } from "./toolRouter.js";
+
 
 const app = express();
 const PORT = 3000;
@@ -30,16 +31,24 @@ app.post("/chat", async (req: Request, res: Response) => {
 
     console.log("User Prompt:", userPrompt);
 
+    const sqlPrompt = `
+You are a SQL assistant. I have a table named customers with the following columns:
+- customer_id: integer (primary key)
+- full_name: character varying(100)
+- email: character varying(100)
+- phone: character varying(15)
+- created_at: timestamp without time zone
+
+Based on the client's request below, generate only one valid PostgreSQL SELECT query.
+Client request: "${userPrompt}"
+Rules:
+- Return only SQL (no explanation, no markdown).
+- Use only the customers table and its listed columns.
+- Do not use a table named customer.
+- Prefer exact column names as provided.
+`.trim();
+
     // STEP 1 — Check MCP Tool Router
-    const toolResponse = await handleToolCall(userPrompt);
-
-    if (toolResponse) {
-      console.log("Tool executed instead of LLM");
-      console.log("Tool response:", toolResponse);
-      return res.json({ reply: toolResponse, source: "tool" });
-    }
-
-    console.log("No tool matched — calling LLM");
 
     // STEP 2 — Call Ollama LLM
     const response = await fetch("http://127.0.0.1:11434/api/generate", {
@@ -49,7 +58,7 @@ app.post("/chat", async (req: Request, res: Response) => {
       },
       body: JSON.stringify({
         model: "llama3",
-        prompt: userPrompt,
+        prompt: sqlPrompt,
         stream: false,
       }),
     });
@@ -62,7 +71,17 @@ app.post("/chat", async (req: Request, res: Response) => {
 
     console.log("LLM response received:", data.response);
 
-    res.json({
+    const toolResponse = await handleToolCall2(data.response);
+
+    if (toolResponse) {
+      console.log("Tool executed instead of LLM");
+      console.log("Tool response:", toolResponse);
+      return res.json({ reply: toolResponse, source: "tool" });
+    }
+
+    console.log("No tool matched — calling LLM");
+
+    return res.json({
       reply: data.response,
       source: "llm",
     });
@@ -73,6 +92,7 @@ app.post("/chat", async (req: Request, res: Response) => {
       details: error instanceof Error ? error.message : "Unknown error",
     });
   }
+  
 });
 
 // Bind explicitly to IPv4

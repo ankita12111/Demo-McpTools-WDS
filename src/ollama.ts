@@ -5,7 +5,7 @@ export async function askLLM(prompt: string) {
     body: JSON.stringify({
       model: "llama3",
       prompt,
-      stream: false
+      stream: true
     }),
   });
 

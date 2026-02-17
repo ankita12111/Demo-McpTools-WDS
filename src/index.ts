@@ -48,7 +48,7 @@ app.post("/chat", async (req: Request, res: Response) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "llama3",
+        model: "llama3.2:3b",
         prompt: userPrompt,
         stream: false,
       }),

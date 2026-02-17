@@ -4,25 +4,73 @@ export async function handleToolCall(prompt: string) {
   console.log("handleToolCall received:", prompt);
 
   const lowerPrompt = prompt.toLowerCase();
+  const customerIntent =
+    /\b(customers?)\b/.test(lowerPrompt) &&
+    /\b(show|list|get|find|display)\b/.test(lowerPrompt);
+  const startsWithMatch = lowerPrompt.match(/starts?\s+with\s+([a-z])/i);
+  const startsWith = startsWithMatch?.[1];
 
   // Example: Match prompts about customers
-  if (lowerPrompt.includes("show all customers") || lowerPrompt.includes("list customers")) {
+  if (customerIntent) {
     let client;
     try {
       client = await pool.connect();
 
-      // Query your customers table
-      const result = await client.query<{ name: string; email: string }>(
-        "SELECT full_name AS name, email FROM customers ORDER BY customer_id",
+      const columnsResult = await client.query<{ column_name: string }>(
+        `
+          SELECT column_name
+          FROM information_schema.columns
+          WHERE table_schema = 'public'
+            AND table_name = 'customers'
+        `,
+      );
+      const columns = new Set(columnsResult.rows.map((r) => r.column_name));
+      const nameColumn = columns.has("full_name")
+        ? "full_name"
+        : columns.has("name")
+          ? "name"
+          : columns.has("customer_name")
+            ? "customer_name"
+            : columns.has("first_name") && columns.has("last_name")
+              ? "first_name || ' ' || last_name"  
+            : null;
+      const emailColumn = columns.has("email_address") ? "email_address" : null;
+      const orderColumn = columns.has("customer_id")
+        ? "customer_id"
+        : columns.has("id")
+          ? "id"
+          : nameColumn ?? null;
+
+      if (!nameColumn) {
+        return "Could not find a name column in customers table.";
+      }
+
+      const params: string[] = [];
+      let whereClause = "";
+      if (startsWith) {
+        params.push(`${startsWith}%`);
+        whereClause = ` WHERE ${nameColumn} ILIKE $1`;
+      }
+      const orderByClause = orderColumn ? ` ORDER BY ${orderColumn}` : "";
+
+      const result = await client.query<{ name: string; email?: string }>(
+        `SELECT ${nameColumn} AS name, ${
+          emailColumn ? `${emailColumn} AS email` : "NULL::text AS email"
+        } FROM customers${whereClause}${orderByClause}`,
+        params,
       );
 
       if (result.rows.length === 0) {
-        return "No customers found in the database.";
+        return startsWith
+          ? `No customers found whose name starts with '${startsWith}'.`
+          : "No customers found in the database.";
       }
 
       // Format the result nicely
       const formatted = result.rows
-        .map((row, i) => `${i + 1}. ${row.name} (${row.email})`)
+        .map((row, i) =>
+          row.email ? `${i + 1}. ${row.name} (${row.email})` : `${i + 1}. ${row.name}`,
+        )
         .join("\n");
 
       return `Customer List:\n${formatted}`;

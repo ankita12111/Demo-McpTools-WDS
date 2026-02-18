@@ -5,7 +5,7 @@ export async function askLLM(prompt) {
         body: JSON.stringify({
             model: "llama3",
             prompt,
-            stream: false
+            stream: true
         }),
     });
     const data = await response.json();

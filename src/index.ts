@@ -32,20 +32,61 @@ app.post("/chat", async (req: Request, res: Response) => {
     console.log("User Prompt:", userPrompt);
 
     const sqlPrompt = `
-You are a SQL assistant. I have a table named customers with the following columns:
-- customer_id: integer (primary key)
-- full_name: character varying(100)
-- email: character varying(100)
-- phone: character varying(15)
-- created_at: timestamp without time zone
+You are a SQL assistant for PostgreSQL.
 
-Based on the client's request below, generate only one valid PostgreSQL SELECT query.
+Database schema (use only these tables and columns):
+1) branches
+- branch_id (varchar, primary key)
+- branch_name (varchar)
+- city (varchar)
+- ifsc (varchar)
+
+2) customers
+- customer_id (varchar, primary key)
+- name (varchar)
+- date_of_birth (date)
+- gender (char)
+- email (varchar)
+- phone (varchar)
+
+3) accounts
+- account_id (varchar, primary key)
+- customer_id (varchar, fk -> customers.customer_id)
+- branch_id (varchar, fk -> branches.branch_id)
+- account_type (varchar)
+- balance (numeric)
+- open_date (date)
+- status (varchar)
+
+4) loans
+- loan_id (varchar, primary key)
+- customer_id (varchar, fk -> customers.customer_id)
+- account_id (varchar, fk -> accounts.account_id)
+- loan_type (varchar)
+- principal (numeric)
+- interest_rate (numeric)
+- term_months (int)
+- status (varchar)
+- start_date (date)
+- end_date (date)
+
+5) transactions
+- transaction_id (varchar, primary key)
+- account_id (varchar, fk -> accounts.account_id)
+- transaction_date (date)
+- transaction_type (varchar: Debit/Credit)
+- amount (numeric)
+- channel (varchar)
+- status (varchar)
+
 Client request: "${userPrompt}"
+
 Rules:
-- Return only SQL (no explanation, no markdown).
-- Use only the customers table and its listed columns.
-- Do not use a table named customer.
-- Prefer exact column names as provided.
+- Return exactly one valid PostgreSQL SELECT query only.
+- No markdown, no explanation, no comments.
+- You may use joins, aggregations (COUNT/SUM/AVG/MIN/MAX), GROUP BY, HAVING, ORDER BY, CTEs, window functions, and arithmetic expressions.
+- Use only the five listed tables.
+- Use exact column names from this schema.
 `.trim();
 
     // STEP 1 — Check MCP Tool Router

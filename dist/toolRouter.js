@@ -8,7 +8,7 @@ export async function handleToolCall(prompt) {
         try {
             client = await pool.connect();
             // Query your customers table
-            const result = await client.query("SELECT full_name AS name, email FROM customers ORDER BY customer_id");
+            const result = await client.query("SELECT name, email FROM customers ORDER BY customer_id");
             if (result.rows.length === 0) {
                 return "No customers found in the database.";
             }
@@ -29,7 +29,13 @@ export async function handleToolCall(prompt) {
     // If no tool matches, return null so LLM is called
     return null;
 }
-const ALLOWED_TABLES = new Set(["customer", "customers"]);
+const ALLOWED_TABLES = new Set([
+    "branches",
+    "customers",
+    "accounts",
+    "loans",
+    "transactions",
+]);
 const BLOCKED_KEYWORDS = /\b(insert|update|delete|drop|alter|truncate|create|grant|revoke|comment|copy|call|do|vacuum|analyze)\b/i;
 function stripCodeFences(text) {
     return text.replace(/```sql/gi, "").replace(/```/g, "").trim();

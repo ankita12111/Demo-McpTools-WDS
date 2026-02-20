@@ -1,0 +1,51 @@
+branch_id,branch_name,city,ifsc
+1,Kelly PLC,Morganhaven,IFSC100001
+2,Keller Group,Chapmanstad,IFSC100002
+3,"Mcconnell, Harris and Baker",Ericfurt,IFSC100003
+4,"Jennings, Wood and Hobbs",Lake Elizabethport,IFSC100004
+5,Morris Ltd,North Deborah,IFSC100005
+6,Marks Ltd,Lake Paul,IFSC100006
+7,Jones Group,Onealstad,IFSC100007
+8,Chaney-Greene,South Jennifer,IFSC100008
+9,"Wood, Blair and Brown",Walkerton,IFSC100009
+10,"Weiss, Roach and Chavez",North Andrew,IFSC100010
+11,Carr Group,Brianside,IFSC100011
+12,Fowler-Moss,Port Stevenland,IFSC100012
+13,"Yates, Jimenez and Barber",Allenshire,IFSC100013
+14,"Vazquez, Matthews and Rios",West Kristine,IFSC100014
+15,"Martinez, Kim and Shaw",Port Timothy,IFSC100015
+16,Oliver Group,Mossmouth,IFSC100016
+17,Leonard-White,Elizabethberg,IFSC100017
+18,Anderson-Wilkinson,Shellytown,IFSC100018
+19,Cameron-Kelly,New Jerry,IFSC100019
+20,Thompson Ltd,New Michael,IFSC100020
+21,"Wood, Cole and Perez",South Olivia,IFSC100021
+22,Sanders-Roberts,Teresafurt,IFSC100022
+23,Walker-Bauer,North Dalton,IFSC100023
+24,"Banks, Jones and Allen",Robertberg,IFSC100024
+25,"Mcfarland, Mack and Sanchez",Derrickport,IFSC100025
+26,"Meyer, Brown and Kim",Lake Dennis,IFSC100026
+27,Melton Inc,New Gabriel,IFSC100027
+28,Rivera-Roberts,Kimberlyberg,IFSC100028
+29,Andrews Ltd,South Kyle,IFSC100029
+30,Hunter-Moreno,Port Sandra,IFSC100030
+31,"Smith, Ross and Rios",North Richard,IFSC100031
+32,Mills-Evans,Martinezbury,IFSC100032
+33,Horn-Smith,Haileyhaven,IFSC100033
+34,Banks-Wilson,Port James,IFSC100034
+35,Gonzalez-Hill,Gibsonhaven,IFSC100035
+36,"Lowery, Stephens and Williams",South Joanna,IFSC100036
+37,"Johnston, Prince and Huynh",Michaelborough,IFSC100037
+38,"Chapman, Sanchez and Turner",Markshire,IFSC100038
+39,"Hunter, Brown and Soto",West Debbie,IFSC100039
+40,"Peters, Odonnell and Stanley",Parkerside,IFSC100040
+41,Green and Sons,Reginabury,IFSC100041
+42,Wise-Freeman,West Johnfurt,IFSC100042
+43,Mason-Morgan,Calvinborough,IFSC100043
+44,Knapp PLC,Holmesbury,IFSC100044
+45,Wright-Rodriguez,North Bruceport,IFSC100045
+46,"Miles, Lewis and Carter",Thomasshire,IFSC100046
+47,Peterson and Sons,North Rachel,IFSC100047
+48,Haynes PLC,Santosberg,IFSC100048
+49,Castillo Group,Kaylaland,IFSC100049
+50,"Porter, Powell and Gutierrez",East Timothybury,IFSC100050

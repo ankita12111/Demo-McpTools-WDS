@@ -27,48 +27,51 @@ You are a SQL assistant for PostgreSQL.
 
 Database schema (use only these tables and columns):
 1) branches
-- branch_id (varchar, primary key)
-- branch_name (varchar)
-- city (varchar)
-- ifsc (varchar)
+- branch_id (serial, primary key)
+- branch_name (text)
+- city (text)
+- ifsc (text)
 
 2) customers
-- customer_id (varchar, primary key)
-- name (varchar)
+- customer_id (serial, primary key)
+- name (text)
 - date_of_birth (date)
-- gender (char)
-- email (varchar)
-- phone (varchar)
+- gender (text)
+- email (text)
+- phone (text)
+- start_date (date)
 
 3) accounts
-- account_id (varchar, primary key)
-- customer_id (varchar, fk -> customers.customer_id)
-- branch_id (varchar, fk -> branches.branch_id)
-- account_type (varchar)
+- account_id (serial, primary key)
+- customer_id (int, fk -> customers.customer_id)
+- branch_id (int, fk -> branches.branch_id)
+- account_type (text)
 - balance (numeric)
 - open_date (date)
-- status (varchar)
+- status (text)
 
 4) loans
-- loan_id (varchar, primary key)
-- customer_id (varchar, fk -> customers.customer_id)
-- account_id (varchar, fk -> accounts.account_id)
-- loan_type (varchar)
-- principal (numeric)
-- interest_rate (numeric)
+- loan_id (serial, primary key)
+- customer_id (int, fk -> customers.customer_id)
+- account_id (int, fk -> accounts.account_id)
+- loan_type (text)
+- principle (numeric)
+- interest (numeric)
 - term_months (int)
-- status (varchar)
+- status (text)
 - start_date (date)
 - end_date (date)
 
 5) transactions
-- transaction_id (varchar, primary key)
-- account_id (varchar, fk -> accounts.account_id)
+- transaction_id (serial, primary key)
+- account_id (int, fk -> accounts.account_id)
 - transaction_date (date)
-- transaction_type (varchar: Debit/Credit)
+- transaction_type (text)
 - amount (numeric)
-- channel (varchar)
-- status (varchar)
+- channel (text)
+- status (text)
+- start_date (date)
+- end_date (date)
 
 Client request: "${userPrompt}"
 
@@ -78,6 +81,8 @@ Rules:
 - You may use joins, aggregations (COUNT/SUM/AVG/MIN/MAX), GROUP BY, HAVING, ORDER BY, CTEs, window functions, and arithmetic expressions.
 - Use only the five listed tables.
 - Use exact column names from this schema.
+- Do NOT invent tables (e.g., phone_numbers). There is no phone_numbers table.
+- Customer phone data is stored only in customers.phone.
 `.trim();
         // STEP 1 — Check MCP Tool Router
         // STEP 2 — Call Ollama LLM
@@ -87,7 +92,7 @@ Rules:
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                model: "llama3",
+                model: "llama3:8b",
                 prompt: sqlPrompt,
                 stream: false,
             }),
